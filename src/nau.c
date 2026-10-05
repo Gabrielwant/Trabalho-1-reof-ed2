@@ -1,4 +1,3 @@
-
 #include <stdlib.h>
 #include "nau.h"
 #include "util.h"
@@ -30,8 +29,9 @@ void nau_define_energia(Nau n, double e) { n->energia = e < 0 ? 0 : e; }
 
 void nau_gasta(Nau n, double e)
 {
-    (void)n;
-    (void)e;
+    n->energia -= e;
+    if (n->energia < 0)
+        n->energia = 0;
 }
 
 void nau_ganha(Nau n, double e) { n->energia += e; }
@@ -52,16 +52,22 @@ int nau_peixes(Nau n) { return n->peixes; }
 int nau_moedas(Nau n) { return n->moedas; }
 int nau_destruida(Nau n) { return n->destruida; }
 
-void nau_marca_destruida(Nau n) { (void)n; }
+void nau_marca_destruida(Nau n)
+{
+    n->destruida = 1;
+    n->forma = NULL;
+}
 
 const char *nau_cor_contorno(Nau n)
 {
-    (void)n;
-    return "#484537";
+    double e = n->energia;
+    if (util_igual(e, 0.0) || e < 0.0)
+        return "#484537";
+    if (e < 100.0)
+        return "#FFCC00";
+    if (e < 250.0)
+        return "#217821";
+    return "#800066";
 }
 
-double nau_largura_contorno(Nau n)
-{
-    (void)n;
-    return 2.0;
-}
+double nau_largura_contorno(Nau n) { return n->energia >= 250.0 ? 3.0 : 2.0; }

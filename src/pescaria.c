@@ -1,6 +1,6 @@
-
 #include <stdlib.h>
 #include "pescaria.h"
+#include "tabela.h"
 
 struct pescaria_s
 {

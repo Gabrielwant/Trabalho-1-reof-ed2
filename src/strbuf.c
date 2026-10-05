@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -40,16 +39,31 @@ void strbuf_printf(StrBuf s, const char *fmt, ...)
     va_list ap, ap2;
     va_start(ap, fmt);
     va_copy(ap2, ap);
-    int n = vsnprintf(NULL, 0, fmt, ap); /* tamanho do texto a acrescentar */
+    int n = vsnprintf(NULL, 0, fmt, ap);
     va_end(ap);
     if (n < 0)
     {
         va_end(ap2);
         return;
     }
-
-    (void)s;
+    size_t precisa = s->tam + (size_t)n + 1;
+    if (precisa > s->cap)
+    {
+        size_t nc = s->cap;
+        while (nc < precisa)
+            nc *= 2;
+        char *p = realloc(s->dados, nc);
+        if (!p)
+        {
+            va_end(ap2);
+            return;
+        }
+        s->dados = p;
+        s->cap = nc;
+    }
+    vsnprintf(s->dados + s->tam, (size_t)n + 1, fmt, ap2);
     va_end(ap2);
+    s->tam += (size_t)n;
 }
 
 const char *strbuf_conteudo(StrBuf s) { return s->dados; }

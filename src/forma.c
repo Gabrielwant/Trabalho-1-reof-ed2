@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -211,3 +210,35 @@ const char *forma_texto_conteudo(Forma f) { return f->tipo == FORMA_TEXTO ? f->t
 char forma_ancora_texto(Forma f) { return f->ancora; }
 const char *forma_cor_borda(Forma f) { return f->corb; }
 const char *forma_cor_preenchimento(Forma f) { return f->corp; }
+
+int forma_eh_lagosta(Forma f)
+{
+    return f->tipo == FORMA_TEXTO && strcmp(f->txt, ">-|-<") == 0;
+}
+
+int forma_eh_moeda(Forma f)
+{
+    return f->tipo == FORMA_TEXTO && strcmp(f->txt, "$") == 0;
+}
+
+void forma_descreve(Forma f, FILE *s)
+{
+    switch (f->tipo)
+    {
+    case FORMA_CIRCULO:
+        fprintf(s, "id=%d circulo ancora=(%.2f, %.2f) raio=%.2f borda=%s preenchimento=%s",
+                f->id, f->x, f->y, f->a, f->corb, f->corp);
+        break;
+    case FORMA_RETANGULO:
+        fprintf(s, "id=%d retangulo ancora=(%.2f, %.2f) largura=%.2f altura=%.2f borda=%s preenchimento=%s",
+                f->id, f->x, f->y, f->a, f->b, f->corb, f->corp);
+        break;
+    case FORMA_LINHA:
+        fprintf(s, "id=%d linha ancora=(%.2f, %.2f) outra-extremidade=(%.2f, %.2f) cor=%s",
+                f->id, f->x, f->y, f->a, f->b, f->corb);
+        break;
+    default:
+        fprintf(s, "id=%d texto ancora=(%.2f, %.2f) posicao=%c texto=\"%s\" borda=%s preenchimento=%s",
+                f->id, f->x, f->y, f->ancora, f->txt, f->corb, f->corp);
+    }
+}

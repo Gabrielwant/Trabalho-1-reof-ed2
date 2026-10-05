@@ -1,7 +1,8 @@
-
 #ifndef PESCARIA_H
 #define PESCARIA_H
 #include "forma.h"
+#include "arvore.h"
+#include "nau.h"
 
 /*
  * Modulo pescaria: o "banco de dados" da pescaria. Reune

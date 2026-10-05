@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,6 +8,7 @@
 #include "strbuf.h"
 #include "util.h"
 
+/* Monta o caminho de saida: dir/base[-qbase].ext */
 static char *nome_saida(const char *dir, const char *base, const char *qbase, const char *ext)
 {
     size_t n = strlen(base) + (qbase ? strlen(qbase) + 1 : 0) + strlen(ext) + 2;
@@ -45,6 +45,8 @@ int main(int argc, char *argv[])
             dir_e = argv[++i];
         else if (strcmp(argv[i], "-f") == 0 && i + 1 < argc)
             arq_f = argv[++i];
+        else if (strcmp(argv[i], "-q") == 0 && i + 1 < argc)
+            arq_q = argv[++i];
         else if (strcmp(argv[i], "-o") == 0 && i + 1 < argc)
             dir_o = argv[++i];
         else
@@ -53,6 +55,11 @@ int main(int argc, char *argv[])
     if (!arq_f || !dir_o)
     {
         fprintf(stderr, "uso: %s [-e dir_entrada] -f arq.geo [-q consulta.qry] -o dir_saida\n", argv[0]);
+        return 1;
+    }
+    if (!util_cria_dir(dir_o))
+    {
+        fprintf(stderr, "erro: nao foi possivel criar o diretorio %s\n", dir_o);
         return 1;
     }
 
@@ -71,6 +78,31 @@ int main(int argc, char *argv[])
 
     if (arq_q)
     {
+        char *qry_path = util_junta(dir_e, arq_q);
+        char *qbase = util_nome_base(arq_q);
+        char *txt_path = nome_saida(dir_o, base, qbase, "txt");
+        FILE *txt = fopen(txt_path, "w");
+        StrBuf extras = strbuf_cria();
+        if (!txt)
+        {
+            fprintf(stderr, "erro: nao foi possivel criar %s\n", txt_path);
+        }
+        else
+        {
+            if (!qry_executa(qry_path, p, txt, extras))
+                fprintf(stderr, "erro: nao foi possivel abrir %s\n", qry_path);
+            fclose(txt);
+        }
+        char *svg1 = nome_saida(dir_o, base, qbase, "svg");
+        char *dot1 = nome_saida(dir_o, base, qbase, "dot");
+        svg_gera(p, svg1, strbuf_conteudo(extras));
+        grava_dot(p, dot1);
+        free(svg1);
+        free(dot1);
+        free(txt_path);
+        free(qbase);
+        free(qry_path);
+        strbuf_destroi(extras);
     }
     else
     {

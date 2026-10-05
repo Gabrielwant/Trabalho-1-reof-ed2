@@ -2,6 +2,24 @@
 #define FORMA_H
 #include <stdio.h>
 
+/*
+ * Modulo forma: formas geometricas do plano (circulo, retangulo, linha e
+ * texto). TAD opaco: a estrutura so e conhecida em forma.c.
+ *
+ * Papel de cada forma na pescaria:
+ *   retangulo = nau | circulo = peixe | linha = camarao
+ *   texto ">-|-<" = lagosta | texto "$" = moeda | outro texto = alga/detrito
+ *
+ * Convencoes geometricas (o eixo Y cresce para baixo):
+ *   - circulo : ancora = centro.
+ *   - retangulo: ancora = canto de menor X e menor Y.
+ *   - linha   : ancora = extremidade de menor X (menor Y em caso de empate).
+ *   - texto   : ancora conforme o parametro 'i' (inicio), 'm' (meio) ou
+ *               'f' (fim). O texto ocupa um segmento horizontal de
+ *               10 unidades por caractere.
+ *   - area: circulo = pi*r^2; retangulo = w*h; linha = 2*comprimento;
+ *           texto = 20*numero_de_caracteres.
+ */
 typedef struct forma_s *Forma;
 
 typedef enum

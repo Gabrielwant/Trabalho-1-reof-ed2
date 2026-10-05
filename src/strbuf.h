@@ -1,4 +1,3 @@
-
 #ifndef STRBUF_H
 #define STRBUF_H
 

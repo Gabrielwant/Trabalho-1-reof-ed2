@@ -1,7 +1,8 @@
-
 #ifndef QRY_H
 #define QRY_H
 #include <stdio.h>
+#include "pescaria.h"
+#include "strbuf.h"
 
 /*
  * Modulo qry: execucao dos comandos do arquivo .qry.
